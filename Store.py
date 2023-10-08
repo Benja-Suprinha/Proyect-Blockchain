@@ -3,19 +3,20 @@ import plyvel
 from datetime import datetime
 import time
 import hashlib
+import Entities
 
 #Para generar un bloque necesitamos hacer un hash asi que se crean dos funciones
 #generateBlock que agarra ciertos parametros y crea el objeto de hash retornando este
 #calculateHash que agarra el bloque creado anteriormente y le asigna su hash
-def generateBlock(index: int, previousHash: str, Transactions, Nonce: int):
+def generateBlock(index: int, previousHash: str, Transactions):
     tiempo_actual = datetime.now()
     tiempo_unix = int(time.mktime(tiempo_actual.timetuple()))
-    block = Block(index, tiempo_unix, Transactions, previousHash, "", Nonce)
+    block = Entities.Block(index, tiempo_unix, Transactions, previousHash, "")
     block.Hash = calculateHash(block)
     return block
     
 def calculateHash(block):
-    data = f"{block.Index}{block.Timestamp}{block.previousHash}{block.Nonce}"
+    data = f"{block.Index}{block.Timestamp}{block.previousHash}"
     for tx in block.Transactions:
         data += f"{tx.sender}{tx.receiver}{tx.amount}"    
     h = hashlib.sha256()
