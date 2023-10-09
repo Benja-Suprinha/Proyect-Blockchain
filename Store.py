@@ -24,28 +24,33 @@ def calculateHash(block):
 
     return h.hexdigest()
     
-def saveBlock(db, block):
+def saveBlock(block):
+    db = plyvel.DB('./mydb', create_if_missing=True)
     block_data = block.toJSON()
     if block_data is None:
-        return None
+        return "Block no data"
     
     key = bytearray(f"block-{block.Index}", "utf-8").__str__()
     key = key.encode("utf-8")
 
     err = db.put(key, block_data.encode("utf-8"))
     if err is not None:
+        db.close()
         return err
 
-    return None
+    db.close()
+    return 'Block add succefully'
+
 
 #ahora quiero extraer el valor de un bloque sabiendo su llave, para ello se utilizara la funcion get
 
 
-def getBlockValue(db, key):
+def getBlock(key):
     try:
         # accedo a la base de datos
         db = plyvel.DB('./mydb', create_if_missing=True)
         #asigno una variable valor (lo que quiero buscar)
+        key = bytearray(f"block-{key}", "utf-8").__str__()
         value = db.get(key.encode('utf-8'))
         #Si existe, lo retorno
         if value is not None:
@@ -59,3 +64,14 @@ def getBlockValue(db, key):
     finally:
         db.close()
 
+def getBlocks():
+    try:
+        blockList = []
+        db = plyvel.DB('./mydb')
+        for key, value in db:
+            print(value.decode('utf-8'))
+            blockList.append(value.decode('utf-8'))
+        return blockList
+        db.close()
+    except Exception as e:
+        print(f"Error: {e}")
