@@ -8,18 +8,6 @@ En esta sección se explicará con mayor detalle la lógica del codigo que se es
 
 * Entities.py: En este archivo se definen dos clases importantes para construir un blockchain, Transaction y Block.
   
-  ```
-  class Transaction:
-    def __init__(self, sender, receiver: str, amount: float, Nonce: int):
-        self.sender = sender
-        self.receiver = receiver
-        self.amount = amount
-        self.Nonce = Nonce
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
-  ```
-  
   Esta clase representa la transacción de un blockchain y posee cuatro atributos:
   
   * sender: representa a la persona que envía una transacción.
@@ -28,19 +16,6 @@ En esta sección se explicará con mayor detalle la lógica del codigo que se es
   * Nonce: este número es utilizado por la minería de bloques y se utiliza para asegurar que una transacción no se haga mas de una vez.
 
     Luego se utiliza la libreria json de pyhtonn para exportar dicha transacción en un formato json
-    
- ```
-class Block:
-    def __init__(self, Index: int, Timestamp: int, Transactions, previousHash: str, Hash: str):
-        self.Index = Index
-        self.Timestamp = Timestamp
-        self.Transactions = Transactions
-        self.previousHash = previousHash
-        self.Hash = Hash
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
-  ```
   
   Esta clase representa a los bloques, los cuáles son una estructura fundamental para los blockchain ya que, permite organizar y almacenar las transacciones y otros datos de manera segura y eficiente, sus atributos son:
   
@@ -51,3 +26,13 @@ class Block:
   * Hash: representa el hash únnico que tiene el bloque.
 
   De igual forma que la transacción dichos datos se mapean en un formato json especial.
+
+* Store.py: Este código está relacionado con la manipulación de bloques y operaciones de almacenamiento y recuperación en un blockchain
+
+  * generateBlock: Esta función crea un bloque utilizando los parámetros dados, index, previousHash y Transaction, esto lo logra gracias a la clase creada en Entities.py.
+  * calcularHash: Simplemente se encarga de calcular el hash del bloque (Concatena el índice, la marca de tiempo, el hash del bloque anterior y los datos de cada transacción y luego le aplica SHA256 retornando un valor en hexadecimal).
+  * saveBlock: Esta función se encarga de guardar un bloque en una base de datos, para esto se utiliza Plyvel, la cuál convierte el bloque a formato json usando "toJson" de la clase Block.
+  * getBlock: Esta función recibe como parámetro la llave de un bloque y retorna el bloque en formato json
+  * getBlocks: Obtiene todos los bloques de la base de datos y los guarda en una lista, luego imprime cada bloque.
+
+* main.py
