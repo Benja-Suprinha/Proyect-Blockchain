@@ -12,7 +12,7 @@ En esta sección se explicará con mayor detalle la lógica del codigo que se es
 
 * Entities.py: En este archivo se definen dos clases importantes para construir un blockchain, Transaction y Block.
   
-  Esta clase representa la transacción de un blockchain y posee cuatro atributos:
+  La clase "Transaction" representa la transacción de un blockchain y posee cuatro atributos:
   
   * sender: representa a la persona que envía una transacción.
   * receiver: representa a la persona que recibe la transacción, puede ser su dirección id o algún otro nombre que sirva de referencia.
@@ -21,7 +21,7 @@ En esta sección se explicará con mayor detalle la lógica del codigo que se es
 
     Luego se utiliza la libreria json de pyhtonn para exportar dicha transacción en un formato json
   
-  Esta clase representa a los bloques, los cuáles son una estructura fundamental para los blockchain ya que, permite organizar y almacenar las transacciones y otros datos de manera segura y eficiente, sus atributos son:
+  La clase "Block" representa a los bloques, los cuáles son una estructura fundamental para los blockchain ya que, permite organizar y almacenar las transacciones y otros datos de manera segura y eficiente, sus atributos son:
   
   * Index: representa el número que identifica al bloque y sirve para que los demás bloques puedan reconocerse entre ellos, dicho número suele representar la posición del bloque.
   * Timestap: registro de tiempo que indica el momento en el que se creo el bloque.
