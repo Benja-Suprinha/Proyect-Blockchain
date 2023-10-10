@@ -1,4 +1,4 @@
 mnemonic
-bitcoin
 datetime
 plyvel
+eth_account

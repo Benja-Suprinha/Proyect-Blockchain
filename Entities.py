@@ -6,7 +6,7 @@ import hashlib
 
 #Se crean clases para definir nuestras dos entidades, las transacciones y los bloques
 class Transaction:
-    def __init__(self, sender, receiver: str, amount: float, Nonce: int):
+    def __init__(self, sender, receiver: str, amount: float, Nonce: str):
         self.sender = sender
         self.receiver = receiver
         self.amount = amount
