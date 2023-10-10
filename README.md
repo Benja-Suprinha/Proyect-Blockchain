@@ -1,7 +1,11 @@
 # Proyect-Blockchain
 Integrantes del grupo: Tomás Arancibia - Guillermo Martínez - Benjamín Ojeda
 
-## Introducción:
+## Instrucciones:
+
+* Clonar el repositorio
+* Hacer ``` pip install -r requerement.txt  ```
+* Hacer ``` python3 main.py  ```
 
 ## Desarrollo
 En esta sección se explicará con mayor detalle la lógica del codigo que se escribió para realizar el proyecto:
@@ -35,4 +39,7 @@ En esta sección se explicará con mayor detalle la lógica del codigo que se es
   * getBlock: Esta función recibe como parámetro la llave de un bloque y retorna el bloque en formato json
   * getBlocks: Obtiene todos los bloques de la base de datos y los guarda en una lista, luego imprime cada bloque.
 
-* main.py
+* AuthKey.py: Éste código genera una clave pública y privada para una dirección Ethereum utilizando una semilla mnemotécnica (mnemonic phrase).
+
+* main.py: Éste código demuestra cómo generar transacciones, calcular hashes, almacenar y recuperar bloques en una cadena de bloques básica utilizando las funciones definidas en los módulos Store.py, Entities.py y AuthKey.py. Se generan dos bloques de prueba con transacciones y se almacenan en la cadena de bloques, y luego se obtienen y muestran los bloques almacenados.
+
