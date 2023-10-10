@@ -16,7 +16,7 @@ class Transaction:
             sort_keys=True, indent=4)
 
 class Block:
-    def __init__(self, Index: int, Timestamp: int, Transactions, previousHash: str, Hash: str):
+    def __init__(self, Index: int, Timestamp: int, Transactions: list[Transaction], previousHash: str, Hash: str):
         self.Index = Index
         self.Timestamp = Timestamp
         self.Transactions = Transactions

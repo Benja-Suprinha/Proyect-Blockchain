@@ -6,7 +6,7 @@ import plyvel
 private_key, public_key = AuthKey.Keys()
 # Crear una instancia de Block y Transaction para prueba
 transactions = [Entities.Transaction("Alice", "Bob", 10.0, private_key)]
-block = Store.generateBlock(1, "lala", transactions)
+block = Store.generateBlock(1, "", transactions)
 # Calcular y mostrar el hash
 print("Hash del bloque 1:", block.Hash)
 print(Store.saveBlock(block))
