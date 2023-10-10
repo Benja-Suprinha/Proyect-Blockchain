@@ -41,5 +41,4 @@ En esta sección se explicará con mayor detalle la lógica del codigo que se es
 
 * AuthKey.py: Éste código genera una clave pública y privada para una dirección Ethereum utilizando una semilla mnemotécnica (mnemonic phrase).
 
-* main.py: Éste código demuestra cómo generar transacciones, calcular hashes, almacenar y recuperar bloques en una cadena de bloques básica utilizando las funciones definidas en los módulos Store.py, Entities.py y AuthKey.py. Se generan dos bloques de prueba con transacciones y se almacenan en la cadena de bloques, y luego se obtienen y muestran los bloques almacenados.
-
+* main.py: Éste código demuestra como se crean las transacciones, se calculan los hashes, se almacenan y recuperan bloques en una cadena de bloques básica utilizando las funciones definidas en los módulos Store.py, Entities.py y AuthKey.py. Específicamente en dicho archivo se están generando dos bloques de forma estática, en donde el primer bloque es hardcodeado y el segundo bloque se usa para comprobar el funcionamiento.
