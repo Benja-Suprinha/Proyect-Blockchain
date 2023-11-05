@@ -24,7 +24,7 @@ def calculateHash(block):
 
     return h.hexdigest()
     
-def saveBlock(block):
+def saveBlock(block:Entities.Block):
     db = plyvel.DB('./mydb', create_if_missing=True)
     block_data = block.toJSON()
     if block_data is None:
@@ -70,8 +70,12 @@ def getBlocks():
         db = plyvel.DB('./mydb')
         for key, value in db:
             print(value.decode('utf-8'))
-            blockList.append(value.decode('utf-8'))
-        return blockList
+            blockList.append(value.decode('utf-8'))    
         db.close()
+        return blockList
     except Exception as e:
         print(f"Error: {e}")
+
+def NewTransaction(sender: str, receiver: str, amount: float, privateKey: str, nonce: int):
+    transaction = Entities.Transaction(sender,receiver,amount,privateKey,nonce)
+    return transaction

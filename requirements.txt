@@ -2,3 +2,4 @@ mnemonic
 datetime
 plyvel
 eth_account
+ecdsa
