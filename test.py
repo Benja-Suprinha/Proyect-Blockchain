@@ -6,7 +6,7 @@ import json
 
 private_key, public_key, address = AuthKey.Keys()
 # Crear una instancia de Block y Transaction para prueba
-transactions = [Entities.Transaction("Alice", "Bob", 10.0, private_key)]
+transactions = [Entities.Transaction("Alice", "Bob", 10.0, private_key, 0)]
 block = Store.generateBlock(1, "", transactions)
 # Calcular y mostrar el hash
 print("Hash del bloque 1:", block.Hash)

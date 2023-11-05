@@ -69,13 +69,13 @@ def getBlocks():
         blockList = []
         db = plyvel.DB('./mydb')
         for key, value in db:
-            print(value.decode('utf-8'))
+            #print(value.decode('utf-8'))
             blockList.append(value.decode('utf-8'))    
         db.close()
         return blockList
     except Exception as e:
         print(f"Error: {e}")
 
-def NewTransaction(sender: str, receiver: str, amount: float, privateKey: str, nonce: int):
+def generateTransaction(sender: str, receiver: str, amount: float, privateKey: str, nonce: int):
     transaction = Entities.Transaction(sender,receiver,amount,privateKey,nonce)
     return transaction

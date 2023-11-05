@@ -6,6 +6,12 @@ from ecdsa.keys import SigningKey
 import plyvel
 import Entities
 
+#la funcion Keys genera la cuenta genesis con los siguientes parametros
+#private key 0x34f8386691e568df4dc78743f0a0afb70527e008724b6042b4c8975679119cbd
+#public key 0x032293224c2c40051f54895e46f2704660002b6abffade3fc715a3a7f5cb17fb95
+#address 0x390A3d59E5F689134B7Fc85bBFCeEE05264fDaD8
+#balance 10000000
+
 def Keys():
     #Asi se creo el mnemonic
     #mnemonic = Mnemonic("english").generate()
@@ -15,7 +21,7 @@ def Keys():
     eth_account.Account.enable_unaudited_hdwallet_features()
     private_key = eth_account.Account.from_mnemonic(mnemonic)._private_key.hex()
     address = eth_account.Account.from_key(private_key).address
-    
+
     private_key = private_key.lstrip("0x")
     private_key = bytes.fromhex(private_key)
     sk = SigningKey.from_string(private_key, curve=ecdsa.SECP256k1)
@@ -51,8 +57,7 @@ def CreateAccount():
     print("the public key is:", public_key)
     print("the address is:", address)
     print("Remember to save your private key and the mnemonic")
-
-
+    print("All accounts start with 10000")
 
 def SaveAccount(account:Entities.Account):
     db = plyvel.DB('./Accounts', create_if_missing=True)
