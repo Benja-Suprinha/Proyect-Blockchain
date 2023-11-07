@@ -60,20 +60,23 @@ def CreateAccount():
     print("All accounts start with 10000")
 
 def SaveAccount(account:Entities.Account):
-    db = plyvel.DB('./Accounts', create_if_missing=True)
-    account_data = account.toJSON()
-    if account_data is None:
-        return 'Account no data'
-    key = bytearray(f"account-{account.Address}","utf-8").__str__()
-    key = key.encode("utf-8")
+    try: 
+        db = plyvel.DB('./Accounts', create_if_missing=True)
+        account_data = account.toJSON()
+        if account_data is None:
+            return 'Account no data'
+        key = bytearray(f"account-{account.Address}","utf-8").__str__()
+        key = key.encode("utf-8")
 
-    err = db.put(key, account_data.encode("utf-8"))
-    if err is not None:
+        err = db.put(key, account_data.encode("utf-8"))
+        if err is not None:
+            db.close()
+            return err
+        return 'Account create success'
+    except Exception as e:
+        print(f'Error: {e}')
+    finally:    
         db.close()
-        return err
-    
-    db.close()
-    return 'Account create success'
 
 def GetAccounts():
     try:

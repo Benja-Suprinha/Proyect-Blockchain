@@ -5,11 +5,11 @@ import plyvel
 import json
 
 private_key, public_key, address = AuthKey.Keys()
-
 # Crear una instancia de Block y Transaction genesis
-transactions = [Store.generateTransaction("", address, 10.0, '', 0)]
+transactions = [Entities.Transaction("", address, 10.0, '', 0)]
 block = Store.generateBlock(1, "0000000000000000000000000000000000000000000000000000000000000000", transactions)
 Store.saveBlock(block)
+Store.setAmount('0x390A3d59E5F689134B7Fc85bBFCeEE05264fDaD8', 10)
 
 while True:
     print('Ingrese que quiere hacer')
@@ -58,9 +58,15 @@ while True:
             previousHash = data['Hash']
         index = indexLastBlock + 1
         nonce = nonceLastBlock + 1
-        transaction = [Store.generateTransaction(sender,receiver,amount,privateKey,nonce)]
-        print('Transaccion generada exitosamente ...')
-        print('Generando bloque ...')
-        block = Store.generateBlock(index,previousHash,transaction)
-        Store.saveBlock(block)
-        print('Bloque generado y guardado exitosamente.')
+        transaction = Store.generateTransaction(sender,receiver,amount,privateKey,nonce)
+        if transaction == 1:
+            print('Transaccion fallida usuario no encontrado')
+        if transaction == 2:
+            print('Saldo insuficiente')
+        else:
+            transaction = [transaction]
+            print('Transaccion generada exitosamente ...')
+            print('Generando bloque ...')
+            block = Store.generateBlock(index,previousHash,transaction)
+            Store.saveBlock(block)
+            print('Bloque generado y guardado exitosamente.')

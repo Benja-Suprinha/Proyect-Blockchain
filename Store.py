@@ -43,8 +43,6 @@ def saveBlock(block:Entities.Block):
 
 
 #ahora quiero extraer el valor de un bloque sabiendo su llave, para ello se utilizara la funcion get
-
-
 def getBlock(key):
     try:
         # accedo a la base de datos
@@ -77,5 +75,59 @@ def getBlocks():
         print(f"Error: {e}")
 
 def generateTransaction(sender: str, receiver: str, amount: float, privateKey: str, nonce: int):
+    senderValid = getAddress(sender)
+    receiverValid = getAddress(receiver)
+    if senderValid is None or receiverValid is None:
+        return 1
+    senderAmount = getAmount(sender)
+    if senderAmount is None or amount > senderAmount:
+        return 2
+    setAmount(receiver,amount)
     transaction = Entities.Transaction(sender,receiver,amount,privateKey,nonce)
     return transaction
+
+def getAddress(address: str):
+    try:
+        db = plyvel.DB('./Accounts')
+        key = bytearray(f'account-{address}',"utf-8").__str__()
+        value = db.get(key.encode('utf-8'))
+        if value is not None:
+            return value.decode('utf-8')
+        else:
+            return None
+    except Exception as e:
+        print(f"Error: {e}")
+
+def getAmount(address: str):
+    try:
+        db = plyvel.DB('./Accounts')
+        key = bytearray(f'account-{address}',"utf-8").__str__()
+        value = db.get(key.encode('utf-8'))
+        if value is not None:
+            value = json.loads(value)
+            amount = value['Balance']
+            return amount
+        else:
+            return None
+    except Exception as e:
+        print(f"Error: {e}")
+
+def setAmount(address: str, amount: float):
+    try:
+        db = plyvel.DB('./Accounts')
+        key = bytearray(f'account-{address}', 'utf-8').__str__()
+        key = key.encode('utf-8')
+        value = db.get(key)
+        value = json.loads(value)
+        value['Balance'] = value['Balance'] + amount
+        value = json.dumps(value)
+        err = db.put(key, value.encode('utf-8'))
+        if err is not None:
+            db.close()
+            return err
+        return 200
+    except Exception as e:
+        print(f'Error: {e}')
+    finally:
+        db.close()
+    
