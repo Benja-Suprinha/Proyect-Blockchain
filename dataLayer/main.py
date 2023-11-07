@@ -1,3 +1,4 @@
+import time
 import Store
 import Entities
 import AuthKey
@@ -33,7 +34,6 @@ while True:
         AuthKey.GetAccounts()
     if(option == '4'):
         blockList = Store.getBlocks()
-        index = 0
         for block in blockList:
             data = json.loads(block)
             print(block)
@@ -61,9 +61,9 @@ while True:
         transaction = Store.generateTransaction(sender,receiver,amount,privateKey,nonce)
         if transaction == 1:
             print('Transaccion fallida usuario no encontrado')
-        if transaction == 2:
+        elif transaction == 2:
             print('Saldo insuficiente')
-        if transaction == 3:
+        elif transaction == 3:
             print('Firma equivocada')
         else:
             transaction = [transaction]
@@ -72,3 +72,4 @@ while True:
             block = Store.generateBlock(index,previousHash,transaction)
             Store.saveBlock(block)
             print('Bloque generado y guardado exitosamente.')
+        time.sleep(2)

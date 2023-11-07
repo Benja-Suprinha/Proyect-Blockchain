@@ -79,10 +79,11 @@ def getBlocks():
 def generateTransaction(sender: str, receiver: str, amount: float, privateKey: str, nonce: int):
     senderValid = getAddress(sender)
     receiverValid = getAddress(receiver)
-    if senderValid is None or receiverValid is None:
+    if senderValid is None:
+        return 1
+    if  receiverValid is None:
         return 1
     senderAmount = getAmount(sender)
-    print(senderAmount)
     if senderAmount is None:
         return 2
     senderAmount = float(senderAmount)
@@ -161,6 +162,9 @@ def getPublicKey(address: str):
         print(f"Error: {e}")
 
 def isValid(privateKey, publicKey):
+    if len(privateKey) != 66:
+        return False
+    
     private_key = privateKey.lstrip("0x")
     private_key = bytes.fromhex(private_key)
     sk = SigningKey.from_string(private_key, curve=ecdsa.SECP256k1)
