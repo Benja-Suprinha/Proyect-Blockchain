@@ -161,7 +161,6 @@ def getPublicKey(address: str):
         print(f"Error: {e}")
 
 def isValid(privateKey, publicKey):
-    privateKey = privateKey.hex()
     private_key = privateKey.lstrip("0x")
     private_key = bytes.fromhex(private_key)
     sk = SigningKey.from_string(private_key, curve=ecdsa.SECP256k1)

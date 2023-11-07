@@ -84,6 +84,7 @@ def GetAccounts():
         for key, value in db:
             print(value.decode('utf-8'))
             accountList.append(value.decode('utf-8'))
+            print('----------------------------------------------')
         db.close()
         return accountList
     except Exception as e:
