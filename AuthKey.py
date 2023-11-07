@@ -21,7 +21,6 @@ def Keys():
     eth_account.Account.enable_unaudited_hdwallet_features()
     private_key = eth_account.Account.from_mnemonic(mnemonic)._private_key.hex()
     address = eth_account.Account.from_key(private_key).address
-
     private_key = private_key.lstrip("0x")
     private_key = bytes.fromhex(private_key)
     sk = SigningKey.from_string(private_key, curve=ecdsa.SECP256k1)

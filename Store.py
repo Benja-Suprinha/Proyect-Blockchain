@@ -4,6 +4,8 @@ from datetime import datetime
 import time
 import hashlib
 import Entities
+import ecdsa
+from ecdsa.keys import SigningKey
 
 #Para generar un bloque necesitamos hacer un hash asi que se crean dos funciones
 #generateBlock que agarra ciertos parametros y crea el objeto de hash retornando este
@@ -80,8 +82,21 @@ def generateTransaction(sender: str, receiver: str, amount: float, privateKey: s
     if senderValid is None or receiverValid is None:
         return 1
     senderAmount = getAmount(sender)
-    if senderAmount is None or amount > senderAmount:
+    print(senderAmount)
+    if senderAmount is None:
         return 2
+    senderAmount = float(senderAmount)
+    amount = float(amount)
+    if amount > senderAmount:
+        return 2
+    
+    senderPublicKey = getPublicKey(sender)
+
+    isvalid = isValid(privateKey,senderPublicKey)
+
+    if isvalid is False:
+        return 3
+
     setAmount(receiver,amount)
     transaction = Entities.Transaction(sender,receiver,amount,privateKey,nonce)
     return transaction
@@ -130,4 +145,30 @@ def setAmount(address: str, amount: float):
         print(f'Error: {e}')
     finally:
         db.close()
-    
+
+def getPublicKey(address: str):
+    try:
+        db = plyvel.DB('./Accounts')
+        key = bytearray(f'account-{address}',"utf-8").__str__()
+        value = db.get(key.encode('utf-8'))
+        if value is not None:
+            value = json.loads(value)
+            amount = value['PublicKey']
+            return amount
+        else:
+            return None
+    except Exception as e:
+        print(f"Error: {e}")
+
+def isValid(privateKey, publicKey):
+    privateKey = privateKey.hex()
+    private_key = privateKey.lstrip("0x")
+    private_key = bytes.fromhex(private_key)
+    sk = SigningKey.from_string(private_key, curve=ecdsa.SECP256k1)
+
+    public_key = sk.get_verifying_key().to_string("compressed").hex()
+    public_key = '0x' + public_key
+    if public_key == publicKey:
+        return True
+    else:
+        return False
