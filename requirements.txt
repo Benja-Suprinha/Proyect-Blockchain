@@ -3,3 +3,5 @@ datetime
 plyvel
 eth_account
 ecdsa
+libp2p
+requests
