@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 import multiaddr
 import trio
@@ -20,14 +21,28 @@ async def _echo_stream_handler(stream: INetStream) -> None:
     await stream.write(res.encode())
     await stream.close()
 
+async def read_data(stream: INetStream) -> None:
+    while True:
+        read_bytes = await stream.read(MAX_READ_LEN)
+        if read_bytes is not None:
+            read_string = read_bytes.decode()
+            if read_string != "\n":
+                # Green console colour: 	\x1b[32m
+                # Reset console colour: 	\x1b[0m
+                print("\x1b[32m %s\x1b[0m " % read_string, end="")
+
+
+async def write_data(stream: INetStream) -> None:
+    async_f = trio.wrap_file(sys.stdin)
+    while True:
+        line = await async_f.readline()
+        await stream.write(line.encode())
+
 async def run(port: int, destination:str):
     localhost_ip = '127.0.0.1'
-    listen_addr = multiaddr.Multiaddr(f"/ip4/127.0.0.1/tcp/{port}")
+    listen_addr = multiaddr.Multiaddr(f"/ip4/0.0.0.0/tcp/{port}")
 
-    import secrets
-    secret = secrets.token_bytes(32)
-
-    host = libp2p.new_host(key_pair = create_new_key_pair(secret))
+    host = libp2p.new_host()
     async with host.run(listen_addrs = [listen_addr]):
 
         print(f'Yo soy {host.get_id().to_string()}')
