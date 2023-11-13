@@ -23,7 +23,7 @@ async def _echo_stream_handler(stream: INetStream) -> None:
 
 async def read_data(stream: INetStream) -> None:
     while True:
-        read_bytes = await stream.read(MAX_READ_LEN)
+        read_bytes = await stream.read()
         if read_bytes is not None:
             read_string = read_bytes.decode()
             if read_string != "\n":
@@ -65,6 +65,7 @@ async def run(port: int, destination:str):
             await stream.write(msg)
             await stream.close()
             response = await stream.read()
+            print('Sincronizando ...')
             print(msg.decode())
             print(response.decode())
 
