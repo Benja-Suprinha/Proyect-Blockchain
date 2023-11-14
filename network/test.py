@@ -1,26 +1,26 @@
-import asyncio
-from api import block_created_event, block_queue
+import json
+from socket import socket, AF_INET, SOCK_STREAM
 
-# Asynchronous function to process blocks
-async def process_blocks():
+def recibir_bloque():
+    # Creamos un socket TCP
+    servidor = socket(AF_INET, SOCK_STREAM)
+
+    # Escuchamos en el puerto especificado
+    servidor.bind(("127.0.0.1", 5000))
+    servidor.listen()
+
     while True:
-        # Wait for the event to be set
-        await block_created_event.wait()
+        # Aceptamos una conexión
+        cliente, _ = servidor.accept()
 
-        # Get the block from the queue
-        block = await block_queue.get()
+        # Leemos el bloque JSON
+        bloque_json = cliente.recv(1024).decode("utf-8")
 
-        # Reset the event
-        block_created_event.clear()
+        # Convertimos el bloque JSON a un objeto Python
+        bloque = json.loads(bloque_json)
 
-        # Process the block as needed
-        print("Received block:", block)
+        # Realizamos operaciones con el bloque
+        print(bloque)
 
-# Función principal para ejecutar el bucle de eventos
-async def main():
-    # Start the block processing in an asynchronous loop
-    await asyncio.create_task(process_blocks())
-
-# Ejecutar el bucle de eventos
 if __name__ == "__main__":
-    asyncio.run(main())
+    recibir_bloque()
