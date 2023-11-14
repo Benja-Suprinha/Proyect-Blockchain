@@ -1,4 +1,5 @@
 import argparse
+import json
 import sys
 
 import multiaddr
@@ -48,9 +49,10 @@ async def run(port: int, destination:str):
 
         print(f'Yo soy {host.get_id().to_string()}')
 
-        if not destination:
+        if not destination: #firts node
             host.set_stream_handler(PROTOCOL_ID, _echo_stream_handler)
             print('Esperando conexiones ... ')
+            #recibir_bloque(host)
             await trio.sleep_forever()
         else:
             maddr = multiaddr.Multiaddr(destination)
@@ -69,8 +71,9 @@ async def run(port: int, destination:str):
             print('Sincronizando ...')
             print(msg.decode())
             print(response.decode())
+            recibir_bloque(host)
 
-def recibir_bloque():
+def recibir_bloque(host):
     # Creamos un socket TCP
     servidor = socket(AF_INET, SOCK_STREAM)
 
@@ -90,6 +93,7 @@ def recibir_bloque():
 
         # Realizamos operaciones con el bloque
         print(bloque)
+        #return bloque
 
 def main() -> None:
     description = """
