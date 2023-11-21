@@ -5,3 +5,7 @@ services:
       dockerfile: dockerfile-api
     ports:
       - 4000:4000
+
+networks:
+  node-chain:
+    driver: bridge

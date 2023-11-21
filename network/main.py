@@ -81,7 +81,7 @@ def recibir_bloque(host):
     servidor = socket(AF_INET, SOCK_STREAM)
 
     # Escuchamos en el puerto especificado
-    servidor.bind(("127.0.0.1", 5000))
+    servidor.bind(("0.0.0.0", 5000))
     servidor.listen()
 
     while True:
