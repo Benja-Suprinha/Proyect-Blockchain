@@ -1,10 +1,7 @@
 import json
-import queue
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
-from threading import Event
-from queue import Queue
 from socket import socket, AF_INET, SOCK_STREAM
 
 class Transaction(BaseModel):
@@ -22,8 +19,6 @@ class Block(BaseModel):
     Hash: str
 
 app = FastAPI()
-block_queue = Queue()
-block_created_event = Event()
 
 @app.get('/') 
 def root():

@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM bitnami/python:3.9.18-debian-11-r46
 
 COPY . /app
 
