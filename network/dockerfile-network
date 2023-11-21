@@ -1,0 +1,24 @@
+FROM bitnami/python:3.9.18-debian-11-r46
+
+RUN apt-get update && \
+    apt-get install -y libgmp-dev
+
+COPY main.py /app
+
+COPY requirements-net.txt /app
+
+COPY /py-libp2p /app/py-libp2p
+
+WORKDIR /app
+
+RUN pip install --upgrade pip setuptools
+
+RUN cd py-libp2p && pip install -e .[dev] && cd ..
+
+RUN pip install -r requirements-net.txt
+
+EXPOSE 8000
+
+EXPOSE 5000
+
+CMD ["python","main.py"]

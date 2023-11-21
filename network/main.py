@@ -41,6 +41,9 @@ async def write_data(stream: INetStream) -> None:
         await stream.write(line.encode())
 
 async def run(port: int, destination:str):
+    import socket
+    print(socket.gethostbyname(socket.gethostname()))
+
     localhost_ip = '127.0.0.1'
     listen_addr = multiaddr.Multiaddr(f"/ip4/0.0.0.0/tcp/{port}")
 

@@ -1,0 +1,7 @@
+services:
+  api: 
+    build:
+      context: ./network
+      dockerfile: dockerfile-api
+    ports:
+      - 4000:4000
