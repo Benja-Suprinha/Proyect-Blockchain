@@ -33,7 +33,7 @@ async def crear_bloque(bloque: Block):
         # Envía el bloque al otro archivo Python
         block_json = json.dumps(bloque.model_dump())
         client = socket(AF_INET, SOCK_STREAM)
-        client.connect(('172.17.0.4',5000))
+        client.connect(('172.17.0.3',5000))
         client.sendall(block_json.encode('utf-8'))
         client.close()
         return '200'

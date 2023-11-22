@@ -5,7 +5,7 @@ RUN apt-get update && \
 
 COPY requirements-net.txt /app
 
-COPY /py-libp2p /app/py-libp2p
+RUN git clone https://github.com/libp2p/py-libp2p
 
 WORKDIR /app
 
@@ -23,4 +23,4 @@ EXPOSE 5000
 
 COPY main.py /app
 
-CMD ["python","main.py", "--port", "8001", "-d", "/ip4/172.17.0.2/tcp/8000/p2p/QmVFFXNf133LCZppq4pixijYZHpTosXQtz6XarAe9DBxCW"]
+CMD ["python","main.py", "--port", "8001", "-d", "/ip4/172.17.0.2/tcp/8000/p2p/QmUdXJNcKRt3TiZW2ZEi1VzeGdgNAKNytUY1jEyuearjYN  "]
