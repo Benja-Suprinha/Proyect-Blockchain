@@ -1,4 +1,6 @@
 import time
+
+import requests
 import Store
 import Entities
 import AuthKey
@@ -70,6 +72,9 @@ while True:
             print('Transaccion generada exitosamente ...')
             print('Generando bloque ...')
             block = Store.generateBlock(index,previousHash,transaction)
-            Store.saveBlock(block)
-            print('Bloque generado y guardado exitosamente.')
+            api = 'http://127.0.0.1:4000/crear_bloque'
+            response = requests.post(api, json=block)
+            if response.status_code == 200:
+                print('Bloque creado exitosamente.')
+                Store.saveBlock(block)
         time.sleep(2)

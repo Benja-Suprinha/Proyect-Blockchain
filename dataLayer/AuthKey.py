@@ -6,6 +6,7 @@ import ecdsa
 from ecdsa.keys import SigningKey
 import plyvel
 import Entities
+import requests
 
 #la funcion Keys genera la cuenta genesis con los siguientes parametros
 #private key 0x34f8386691e568df4dc78743f0a0afb70527e008724b6042b4c8975679119cbd
@@ -50,14 +51,22 @@ def CreateAccount():
     private_key = '0x' + private_key.hex()
 
     account = Entities.Account(address, public_key, 10000)
-    SaveAccount(account)
+    
+    url = 'http://127.0.0.1:4000/Create_Account'
+    response = requests.post(url, json=account)
 
-    print("the mnemonic is: ", mnemonic)
-    print("the private key is:",private_key)
-    print("the public key is:", public_key)
-    print("the address is:", address)
-    print("Remember to save your private key and the mnemonic")
-    print("All accounts start with 10000")
+    if response.status_code == 200:
+        SaveAccount(account)
+
+        print("the mnemonic is: ", mnemonic)
+        print("the private key is:",private_key)
+        print("the public key is:", public_key)
+        print("the address is:", address)
+        print("Remember to save your private key and the mnemonic")
+        print("All accounts start with 10000")
+    else:
+        print("Error")
+        return None
 
 def SaveAccount(account:Entities.Account):
     try: 

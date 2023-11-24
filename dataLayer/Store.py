@@ -6,6 +6,7 @@ import hashlib
 import Entities
 import ecdsa
 from ecdsa.keys import SigningKey
+import requests
 
 #Para generar un bloque necesitamos hacer un hash asi que se crean dos funciones
 #generateBlock que agarra ciertos parametros y crea el objeto de hash retornando este

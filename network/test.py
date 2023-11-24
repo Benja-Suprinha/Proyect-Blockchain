@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append('../dataLayer')
+
 import json
 from socket import socket, AF_INET, SOCK_STREAM
 
