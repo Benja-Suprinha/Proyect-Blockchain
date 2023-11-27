@@ -21,25 +21,26 @@ MAX_READ_LEN = 2 ** 32 - 1
 
 
 async def read_data(stream: INetStream) -> None:
+    sincronizar()
+    read_bytes = await stream.read()
+    print(read_bytes.decode(), end="")
     while True:
-        #recibir_bloque()
-        print('llegue aca')
         read_bytes = await stream.read()
-        if read_bytes is not None:
-            read_string = read_bytes.decode()
-            if read_string != "\n":
-                # Green console colour: 	\x1b[32m
-                # Reset console colour: 	\x1b[0m
-                print("\x1b[32m %s\x1b[0m " % read_string, end="")
+        print(read_bytes.decode())
+        await trio.sleep(0)
 
 
 async def write_data(stream: INetStream) -> None:
     async_f = trio.wrap_file(sys.stdin)
+    await stream.write('hola'.encode())
     while True:
         data = recibir_bloque()
-        await stream.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))
-        line = await async_f.readline()
-        await stream.write(line.encode())
+        #await stream.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))
+        data = json.dumps(data)
+        #line = await async_f.writelines(data)
+        #print(line)
+        await stream.write(data.encode())
+        await trio.sleep(0)
 
 
 async def run(port: int, destination: str) -> None:
@@ -47,6 +48,7 @@ async def run(port: int, destination: str) -> None:
     listen_addr = multiaddr.Multiaddr(f"/ip4/0.0.0.0/tcp/{port}")
     host = new_host()
     async with host.run(listen_addrs=[listen_addr]), trio.open_nursery() as nursery:
+        
         if not destination:  # its the server
 
             async def stream_handler(stream: INetStream) -> None:
@@ -56,12 +58,12 @@ async def run(port: int, destination: str) -> None:
             host.set_stream_handler(PROTOCOL_ID, stream_handler)
 
             print(
-                f"Run 'python ./examples/chat/chat.py "
-                f"-p {int(port) + 1} "
                 f"-d /ip4/{localhost_ip}/tcp/{port}/p2p/{host.get_id().pretty()}' "
                 "on another console."
             )
             print("Waiting for incoming connection...")
+            await trio.sleep_forever()
+
 
         else:  # its the client
             maddr = multiaddr.Multiaddr(destination)
@@ -75,8 +77,10 @@ async def run(port: int, destination: str) -> None:
             nursery.start_soon(read_data, stream)
             #nursery.start_soon(write_data, stream)
             print(f"Connected to peer {info.addrs[0]}")
+            await trio.sleep(0)
 
-        await trio.sleep_forever()
+def sincronizar():
+    print('Sincronizando...')
 
 def recibir_bloque():
     # Creamos un socket TCP
@@ -95,6 +99,7 @@ def recibir_bloque():
     # Convertimos el bloque JSON a un objeto Python
     bloque = json.loads(bloque_json)
 
+    cliente.close()
     # Realizamos operaciones con el bloque
     print(bloque)
     return bloque

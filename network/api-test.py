@@ -46,6 +46,7 @@ async def crear_bloque(bloque: Block):
 
 @app.post('/Create_Account')
 async def Create_Account(account: Account):
+    print(account)
     if account is None:
         return '400'
     else:
