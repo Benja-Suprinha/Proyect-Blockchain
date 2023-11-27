@@ -3,7 +3,11 @@ FROM bitnami/python:3.9.18-debian-11-r46
 RUN apt-get update && \
     apt-get install -y libgmp-dev
 
-COPY requirements-net.txt /app
+COPY /network/requirements-net.txt /app
+COPY /dataLayer/requirements.txt /app
+COPY /dataLayer/Store.py /app
+COPY /dataLayer/AuthKey.py /app
+COPY /dataLayer/Entities.py /app
 
 RUN git clone https://github.com/libp2p/py-libp2p
 
@@ -15,10 +19,12 @@ RUN cd py-libp2p && pip install -e .[dev] && cd ..
 
 RUN pip install -r requirements-net.txt
 
+RUN pip install -r requirements.txt
+
 EXPOSE 8000
 
 EXPOSE 5000
 
-COPY main.py /app
+COPY /network/main.py /app
 
 CMD ["python","main.py"]
