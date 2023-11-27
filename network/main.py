@@ -114,6 +114,15 @@ async def run(port: int, destination:str):
             print(f"Connected to peer {info.addrs[0]}")
             await trio.sleep(0)
 
+
+def sincronizar():
+    print('Sincronizando...')
+    #for block in json.loads(blocks):
+    #    Store.saveBlock(block) 
+    #for account in json.loads(accounts):
+    #    AuthKey.SaveAccount(account)
+    print('Done!')
+
 def recibir_data(host):
     # Creamos un socket TCP
     servidor = socket(AF_INET, SOCK_STREAM)
