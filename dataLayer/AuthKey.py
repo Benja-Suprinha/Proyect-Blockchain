@@ -53,7 +53,7 @@ def CreateAccount():
     account = Entities.Account(address, public_key, 10000)
     
     url = 'http://127.0.0.1:4000/Create_Account'
-    response = requests.post(url, json=account)
+    response = requests.post(url, account.toJSON())
 
     if response.status_code == 200:
         SaveAccount(account)
@@ -92,16 +92,16 @@ def GetAccounts():
         accountList = []
         db = plyvel.DB('./Accounts', create_if_missing=True)
         for key, value in db:
-            print(value.decode('utf-8'))
+            #print(value.decode('utf-8'))
             accountList.append(value.decode('utf-8'))
-            print('----------------------------------------------')
+            #print('----------------------------------------------')
         db.close()
         return accountList
     except Exception as e:
         print(f"Error: {e}")
 
 def GetGenesisAccount():
-    db = plyvel.DB('./Accounts')
+    db = plyvel.DB('./Accounts', create_if_missing=True)
     key = bytearray(f"account-0x390A3d59E5F689134B7Fc85bBFCeEE05264fDaD8", "utf-8").__str__()
     value = db.get(key.encode('utf-8'))
     if value is not None:

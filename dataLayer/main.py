@@ -33,7 +33,11 @@ while True:
     if(option == '2'):
         print(AuthKey.GetGenesisAccount())
     if(option == '3'):
-        AuthKey.GetAccounts()
+        accountList = AuthKey.GetAccounts()
+        for account in accountList:
+            data = json.loads(account)
+            print(account)
+            print('----------------------------------------------')
     if(option == '4'):
         blockList = Store.getBlocks()
         for block in blockList:
@@ -73,7 +77,7 @@ while True:
             print('Generando bloque ...')
             block = Store.generateBlock(index,previousHash,transaction)
             api = 'http://127.0.0.1:4000/crear_bloque'
-            response = requests.post(api, json=block)
+            response = requests.post(api, block.toJSON())
             if response.status_code == 200:
                 print('Bloque creado exitosamente.')
                 Store.saveBlock(block)

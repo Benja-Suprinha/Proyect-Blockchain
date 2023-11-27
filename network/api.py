@@ -18,6 +18,11 @@ class Block(BaseModel):
     previousHash: str
     Hash: str
 
+class Account(BaseModel):
+    Address: str
+    PublicKey: str
+    Balance: float
+
 app = FastAPI()
 
 @app.get('/') 
@@ -33,10 +38,25 @@ async def crear_bloque(bloque: Block):
         # Envía el bloque al otro archivo Python
         block_json = json.dumps(bloque.model_dump())
         client = socket(AF_INET, SOCK_STREAM)
-        client.connect(('172.17.0.3',5000))
+        client.connect(('172.17.0.2',5000))
         client.sendall(block_json.encode('utf-8'))
         client.close()
         return '200'
+    
+@app.post('/Create_Account')
+async def Create_Account(account: Account):
+    print(account)
+    if account is None:
+        return '400'
+    else:
+        # Envía la cuenta al otro archivo Python
+        account_json = json.dumps(account.model_dump())
+        client = socket(AF_INET, SOCK_STREAM)
+        client.connect(('172.17.0.2',5000))
+        client.sendall(account_json.encode('utf-8'))
+        client.close()
+        return '200'
+
 
 if __name__ == "__main__":
         import uvicorn

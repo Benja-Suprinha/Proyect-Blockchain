@@ -20,8 +20,8 @@ class Block(BaseModel):
 
 class Account(BaseModel):
     Address: str
-    PublicKey: str
     Balance: float
+    PublicKey: str
 
 app = FastAPI()
 
@@ -37,7 +37,7 @@ async def crear_bloque(bloque: Block):
         return '400'
     else:
         # Envía el bloque al otro archivo Python
-        block_json = json.dumps(bloque.model_dump())
+        block_json = json.dumps(bloque.dict())
         client = socket(AF_INET, SOCK_STREAM)
         client.connect(('127.0.0.1',5000))
         client.sendall(block_json.encode('utf-8'))
@@ -51,7 +51,7 @@ async def Create_Account(account: Account):
         return '400'
     else:
         # Envía la cuenta al otro archivo Python
-        account_json = json.dumps(account.model_dump())
+        account_json = json.dumps(account.dict())
         client = socket(AF_INET, SOCK_STREAM)
         client.connect(('127.0.0.1',5000))
         client.sendall(account_json.encode('utf-8'))

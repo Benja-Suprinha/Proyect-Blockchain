@@ -3,6 +3,12 @@ import sys
 
 sys.path.append('../dataLayer')
 
+import requests
+import Store
+import Entities
+import AuthKey
+import plyvel
+import json
 import argparse
 import sys
 
@@ -21,24 +27,45 @@ MAX_READ_LEN = 2 ** 32 - 1
 
 
 async def read_data(stream: INetStream) -> None:
+
     sincronizar()
-    read_bytes = await stream.read()
-    print(read_bytes.decode(), end="")
     while True:
         read_bytes = await stream.read()
         print(read_bytes.decode())
+        data = read_bytes.decode()
+        if 'Transactions' in data:
+            block = Entities.Block(data['Index'], data['Timestamp'], data['Transactions'], data['previousHash'], data['Hash'])
+            print(Store.saveBlock(block))
+            data = block.toJSON()
+        else:
+            if 'Address' in data:
+                account = Entities.Account(data['Address'], data['PublicKey'], data['Balance'])
+                print(AuthKey.SaveAccount(account))
+                data = account.toJSON()
         await trio.sleep(0)
 
 
 async def write_data(stream: INetStream) -> None:
     async_f = trio.wrap_file(sys.stdin)
-    await stream.write('hola'.encode())
+    await stream.write('Connected!'.encode())
+    #blocks = Store.getBlocks()
+    #accounts = AuthKey.GetAccounts()
+    #blocks = json.dumps(blocks)
+    #accounts = json.dumps(accounts)
+    #await stream.write(blocks.encode())
+    #await stream.write(accounts.encode())
     while True:
-        data = recibir_bloque()
-        #await stream.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))
-        data = json.dumps(data)
-        #line = await async_f.writelines(data)
-        #print(line)
+        data = recibir_data()
+        if 'Transactions' in data:
+            block = Entities.Block(data['Index'], data['Timestamp'], data['Transactions'], data['previousHash'], data['Hash'])
+            print(Store.saveBlock(block))
+            data = block.toJSON()
+        else:
+            if 'Address' in data:
+                account = Entities.Account(data['Address'], data['PublicKey'], data['Balance'])
+                print(AuthKey.SaveAccount(account))
+                data = account.toJSON()
+
         await stream.write(data.encode())
         await trio.sleep(0)
 
@@ -62,6 +89,17 @@ async def run(port: int, destination: str) -> None:
                 "on another console."
             )
             print("Waiting for incoming connection...")
+
+            if AuthKey.GetGenesisAccount() is not None:
+                print('Genesis block ya creado!')
+            else:
+                private_key, public_key, address = AuthKey.Keys()
+                # Crear una instancia de Block y Transaction genesis
+                transactions = [Entities.Transaction("", address, 10.0, '', 0)]
+                block = Store.generateBlock(1, "0000000000000000000000000000000000000000000000000000000000000000", transactions)
+                Store.saveBlock(block)
+                print('Genesis block creado!')
+            
             await trio.sleep_forever()
 
 
@@ -81,8 +119,13 @@ async def run(port: int, destination: str) -> None:
 
 def sincronizar():
     print('Sincronizando...')
+    #for block in json.loads(blocks):
+    #    Store.saveBlock(block) 
+    #for account in json.loads(accounts):
+    #    AuthKey.SaveAccount(account)
+    print('Done!')
 
-def recibir_bloque():
+def recibir_data(): ##Recibe data, luego segmenta si es un bloque o un account
     # Creamos un socket TCP
     servidor = socket(AF_INET, SOCK_STREAM)
 

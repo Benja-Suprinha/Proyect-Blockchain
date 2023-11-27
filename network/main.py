@@ -1,82 +1,120 @@
+import json
+import sys
+
+sys.path.append('../dataLayer')
+
+import requests
+import Store
+import Entities
+import AuthKey
+import plyvel
+import json
+import argparse
+import sys
 import argparse
 import json
 import sys
 
 import multiaddr
 import trio
-import libp2p
-from socket import socket, AF_INET, SOCK_STREAM
+from libp2p import new_host
+from libp2p.network.stream.net_stream_interface import INetStream
 from libp2p.peer.peerinfo import info_from_p2p_addr
 from libp2p.typing import TProtocol
-from libp2p.network.stream.net_stream_interface import INetStream
-from libp2p.crypto.secp256k1 import create_new_key_pair
+from socket import socket, AF_INET, SOCK_STREAM
 
 PROTOCOL_ID = TProtocol("/test/1.0.0")
 
-async def _echo_stream_handler(stream: INetStream) -> None:
-    # Wait until EOF
-    req = await stream.read()
-    res = 'Si estas conectado!'
-    print('Se conecto alguien')
-    print('Aca hay que pasarle los bloques que ya existen!')
-    print(req.decode())
-    await stream.write(res.encode())
-    await stream.close()
-
 async def read_data(stream: INetStream) -> None:
+    sincronizar()
     while True:
         read_bytes = await stream.read()
-        if read_bytes is not None:
-            read_string = read_bytes.decode()
-            if read_string != "\n":
-                # Green console colour: 	\x1b[32m
-                # Reset console colour: 	\x1b[0m
-                print("\x1b[32m %s\x1b[0m " % read_string, end="")
+        print(read_bytes.decode())
+        data = read_bytes.decode()
+        if 'Transactions' in data:
+            block = Entities.Block(data['Index'], data['Timestamp'], data['Transactions'], data['previousHash'], data['Hash'])
+            print(Store.saveBlock(block))
+            data = block.toJSON()
+        else:
+            if 'Address' in data:
+                account = Entities.Account(data['Address'], data['PublicKey'], data['Balance'])
+                print(AuthKey.SaveAccount(account))
+                data = account.toJSON()
+        await trio.sleep(0)
 
 
 async def write_data(stream: INetStream) -> None:
     async_f = trio.wrap_file(sys.stdin)
+    await stream.write('Connected!'.encode())
+    #blocks = Store.getBlocks()
+    #accounts = AuthKey.GetAccounts()
+    #blocks = json.dumps(blocks)
+    #accounts = json.dumps(accounts)
+    #await stream.write(blocks.encode())
+    #await stream.write(accounts.encode())
     while True:
-        line = await async_f.readline()
-        await stream.write(line.encode())
+        data = recibir_data()
+        if 'Transactions' in data:
+            block = Entities.Block(data['Index'], data['Timestamp'], data['Transactions'], data['previousHash'], data['Hash'])
+            print(Store.saveBlock(block))
+            data = block.toJSON()
+        else:
+            if 'Address' in data:
+                account = Entities.Account(data['Address'], data['PublicKey'], data['Balance'])
+                print(AuthKey.SaveAccount(account))
+                data = account.toJSON()
+
+        await stream.write(data.encode())
+        await trio.sleep(0)
 
 async def run(port: int, destination:str):
-    import socket
-    print(socket.gethostbyname(socket.gethostname()))
-
-    localhost_ip = '127.0.0.1'
+    localhost_ip = "127.0.0.1"
     listen_addr = multiaddr.Multiaddr(f"/ip4/0.0.0.0/tcp/{port}")
+    host = new_host()
+    async with host.run(listen_addrs=[listen_addr]), trio.open_nursery() as nursery:
+        
+        if not destination:  # its the server
 
-    host = libp2p.new_host()
-    async with host.run(listen_addrs = [listen_addr]):
+            async def stream_handler(stream: INetStream) -> None:
+                #nursery.start_soon(read_data, stream)
+                nursery.start_soon(write_data, stream)
 
-        print(f'Yo soy {host.get_id().to_string()}')
+            host.set_stream_handler(PROTOCOL_ID, stream_handler)
 
-        if not destination: #firts node
-            host.set_stream_handler(PROTOCOL_ID, _echo_stream_handler)
-            print('Esperando conexiones ... ')
-            #recibir_bloque(host)
+            print(
+                f"-d /ip4/{localhost_ip}/tcp/{port}/p2p/{host.get_id().pretty()}' "
+                "on another console."
+            )
+            print("Waiting for incoming connection...")
+
+            if AuthKey.GetGenesisAccount() is not None:
+                print('Genesis block ya creado!')
+            else:
+                private_key, public_key, address = AuthKey.Keys()
+                # Crear una instancia de Block y Transaction genesis
+                transactions = [Entities.Transaction("", address, 10.0, '', 0)]
+                block = Store.generateBlock(1, "0000000000000000000000000000000000000000000000000000000000000000", transactions)
+                Store.saveBlock(block)
+                print('Genesis block creado!')
+            
             await trio.sleep_forever()
-        else:
+
+
+        else:  # its the client
             maddr = multiaddr.Multiaddr(destination)
             info = info_from_p2p_addr(maddr)
-            print(info.peer_id.to_string())
+            # Associate the peer with local ip address
             await host.connect(info)
-
+            # Start a stream with the destination.
+            # Multiaddress of the destination peer is fetched from the peerstore using 'peerId'.
             stream = await host.new_stream(info.peer_id, [PROTOCOL_ID])
-            msg = f"nodo {host.get_id().pretty()} conectado!"
-            msg = 'Se creo un nuevo bloque!'
-            msg = msg.encode()
 
-            await stream.write(msg)
-            await stream.close()
-            response = await stream.read()
-            print('Sincronizando ...')
-            print(msg.decode())
-            print(response.decode())
-            recibir_bloque(host)
+            nursery.start_soon(read_data, stream)
+            #nursery.start_soon(write_data, stream)
+            print(f"Connected to peer {info.addrs[0]}")
+            await trio.sleep(0)
 
-def recibir_bloque(host):
+def recibir_data(host):
     # Creamos un socket TCP
     servidor = socket(AF_INET, SOCK_STREAM)
 
@@ -84,19 +122,19 @@ def recibir_bloque(host):
     servidor.bind(("0.0.0.0", 5000))
     servidor.listen()
 
-    while True:
-        # Aceptamos una conexión
-        cliente, _ = servidor.accept()
+    # Aceptamos una conexión
+    cliente, _ = servidor.accept()
 
-        # Leemos el bloque JSON
-        bloque_json = cliente.recv(1024).decode("utf-8")
+    # Leemos el bloque JSON
+    bloque_json = cliente.recv(1024).decode("utf-8")
 
-        # Convertimos el bloque JSON a un objeto Python
-        bloque = json.loads(bloque_json)
+    # Convertimos el bloque JSON a un objeto Python
+    bloque = json.loads(bloque_json)
 
-        # Realizamos operaciones con el bloque
-        print(bloque)
-        #return bloque
+    cliente.close()
+    # Realizamos operaciones con el bloque
+    print(bloque)
+    return bloque
 
 def main() -> None:
     description = """
