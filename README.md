@@ -14,18 +14,7 @@ Integrantes del grupo: Tomás Arancibia - Guillermo Martínez - Benjamín Ojeda
   * Esperar, nota en windows con docker se demora un poco
 
 ## Desarrollo
-En esta sección se explicará con mayor detalle la lógica del codigo que se escribió para realizar el proyecto:
 
-* Entities.py: En este archivo se definen dos clases importantes para construir un blockchain, Transaction y Block.
-  
-  La clase "Transaction" representa la transacción de un blockchain y posee cuatro atributos:
-  
-  * sender: representa a la persona que envía una transacción.
-  * receiver: representa a la persona que recibe la transacción, puede ser su dirección id o algún otro nombre que sirva de referencia.
-  * amount: indica la cantidad de recursos que se estan enviando en la transacción, por ejemplo, criptomonedas.
-  * Nonce: este número es utilizado por la minería de bloques y se utiliza para asegurar que una transacción no se haga mas de una vez.
-
-    Luego se utiliza la libreria json de pyhtonn para exportar dicha transacción en un formato json
   
   La clase "Block" representa a los bloques, los cuáles son una estructura fundamental para los blockchain ya que, permite organizar y almacenar las transacciones y otros datos de manera segura y eficiente, sus atributos son:
   
