@@ -70,7 +70,7 @@ def CreateAccount():
 
 def SaveAccount(account:Entities.Account):
     try: 
-        db = plyvel.DB('./Accounts', create_if_missing=True)
+        db = plyvel.DB('./dbs/Accounts', create_if_missing=True)
         account_data = account.toJSON()
         if account_data is None:
             return 'Account no data'
@@ -90,7 +90,7 @@ def SaveAccount(account:Entities.Account):
 def GetAccounts():
     try:
         accountList = []
-        db = plyvel.DB('./Accounts', create_if_missing=True)
+        db = plyvel.DB('./dbs/Accounts', create_if_missing=True)
         for key, value in db:
             #print(value.decode('utf-8'))
             accountList.append(value.decode('utf-8'))
@@ -101,7 +101,7 @@ def GetAccounts():
         print(f"Error: {e}")
 
 def GetGenesisAccount():
-    db = plyvel.DB('./Accounts', create_if_missing=True)
+    db = plyvel.DB('./dbs/Accounts', create_if_missing=True)
     key = bytearray(f"account-0x390A3d59E5F689134B7Fc85bBFCeEE05264fDaD8", "utf-8").__str__()
     value = db.get(key.encode('utf-8'))
     if value is not None:

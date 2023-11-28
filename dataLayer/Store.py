@@ -28,7 +28,7 @@ def calculateHash(block):
     return h.hexdigest()
     
 def saveBlock(block:Entities.Block):
-    db = plyvel.DB('./mydb', create_if_missing=True)
+    db = plyvel.DB('./dbs/mydb', create_if_missing=True)
     block_data = block.toJSON()
     if block_data is None:
         return "Block no data"
@@ -49,7 +49,7 @@ def saveBlock(block:Entities.Block):
 def getBlock(key):
     try:
         # accedo a la base de datos
-        db = plyvel.DB('./mydb', create_if_missing=True)
+        db = plyvel.DB('./dbs/mydb', create_if_missing=True)
         #asigno una variable valor (lo que quiero buscar)
         key = bytearray(f"block-{key}", "utf-8").__str__()
         value = db.get(key.encode('utf-8'))
@@ -68,7 +68,7 @@ def getBlock(key):
 def getBlocks():
     try:
         blockList = []
-        db = plyvel.DB('./mydb')
+        db = plyvel.DB('./dbs/mydb')
         for key, value in db:
             #print(value.decode('utf-8'))
             blockList.append(value.decode('utf-8'))    
@@ -105,7 +105,7 @@ def generateTransaction(sender: str, receiver: str, amount: float, privateKey: s
 
 def getAddress(address: str):
     try:
-        db = plyvel.DB('./Accounts')
+        db = plyvel.DB('./dbs/Accounts')
         key = bytearray(f'account-{address}',"utf-8").__str__()
         value = db.get(key.encode('utf-8'))
         if value is not None:
@@ -117,7 +117,7 @@ def getAddress(address: str):
 
 def getAmount(address: str):
     try:
-        db = plyvel.DB('./Accounts')
+        db = plyvel.DB('./dbs/Accounts')
         key = bytearray(f'account-{address}',"utf-8").__str__()
         value = db.get(key.encode('utf-8'))
         if value is not None:
@@ -131,7 +131,7 @@ def getAmount(address: str):
 
 def setAmount(address: str, amount: float):
     try:
-        db = plyvel.DB('./Accounts')
+        db = plyvel.DB('./dbs/Accounts')
         key = bytearray(f'account-{address}', 'utf-8').__str__()
         key = key.encode('utf-8')
         value = db.get(key)
@@ -150,7 +150,7 @@ def setAmount(address: str, amount: float):
 
 def getPublicKey(address: str):
     try:
-        db = plyvel.DB('./Accounts')
+        db = plyvel.DB('./dbs/Accounts')
         key = bytearray(f'account-{address}',"utf-8").__str__()
         value = db.get(key.encode('utf-8'))
         if value is not None:
