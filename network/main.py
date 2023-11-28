@@ -123,7 +123,7 @@ def sincronizar():
     #    AuthKey.SaveAccount(account)
     print('Done!')
 
-def recibir_data(host):
+def recibir_data():
     # Creamos un socket TCP
     servidor = socket(AF_INET, SOCK_STREAM)
 
