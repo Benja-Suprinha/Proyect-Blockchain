@@ -68,7 +68,10 @@ async def write_data(stream: INetStream) -> None:
         await trio.sleep(0)
 
 async def run(port: int, destination:str):
-    localhost_ip = "127.0.0.1"
+    import socket
+    localhost_ip = socket.gethostname()
+    localhost_ip = socket.gethostbyname(localhost_ip)
+        # Obtén la dirección IP privada asociada al nombre del host
     listen_addr = multiaddr.Multiaddr(f"/ip4/0.0.0.0/tcp/{port}")
     host = new_host()
     async with host.run(listen_addrs=[listen_addr]), trio.open_nursery() as nursery:
@@ -82,8 +85,8 @@ async def run(port: int, destination:str):
             host.set_stream_handler(PROTOCOL_ID, stream_handler)
 
             print(
-                f"-d /ip4/{localhost_ip}/tcp/{port}/p2p/{host.get_id().pretty()}' "
-                "on another console."
+                f"/ip4/{localhost_ip}/tcp/{port}/p2p/{host.get_id().pretty()} "
+                "on dockerfile-network-node."
             )
             print("Waiting for incoming connection...")
 

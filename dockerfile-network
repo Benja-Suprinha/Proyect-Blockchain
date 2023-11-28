@@ -5,13 +5,12 @@ RUN apt-get update && \
 
 COPY /network/requirements-net.txt /app
 COPY /dataLayer/requirements.txt /app
-COPY /dataLayer/Store.py /app
-COPY /dataLayer/AuthKey.py /app
-COPY /dataLayer/Entities.py /app
 
 RUN git clone https://github.com/libp2p/py-libp2p
 
 WORKDIR /app
+
+RUN mkdir -p /app/dbs
 
 RUN pip install --upgrade pip setuptools
 
@@ -25,6 +24,9 @@ EXPOSE 8000
 
 EXPOSE 5000
 
+COPY /dataLayer/Store.py /app
+COPY /dataLayer/AuthKey.py /app
+COPY /dataLayer/Entities.py /app
 COPY /network/main.py /app
 
 CMD ["python","main.py"]
