@@ -76,7 +76,7 @@ while True:
             print('Transaccion generada exitosamente ...')
             print('Generando bloque ...')
             block = Store.generateBlock(index,previousHash,transaction)
-            api = 'http://127.0.0.1:4000/crear_bloque'
+            api = 'http://172.17.0.2:4000/crear_bloque'
             response = requests.post(api, block.toJSON())
             if response.status_code == 200:
                 print('Bloque creado exitosamente.')

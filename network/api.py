@@ -27,7 +27,13 @@ app = FastAPI()
 
 @app.get('/') 
 def root():
-    return {"Api": "V1"}
+    import socket
+    hostname = socket.gethostname()
+    ip_address = socket.gethostbyname(hostname)
+    return {
+        "Api": "V1",
+        "ip": ip_address
+        }
 
 # Ruta para la operación POST que recibe un bloque y retorna un mensaje de éxito
 @app.post("/crear_bloque")
@@ -38,7 +44,7 @@ async def crear_bloque(bloque: Block):
         # Envía el bloque al otro archivo Python
         block_json = json.dumps(bloque.model_dump())
         client = socket(AF_INET, SOCK_STREAM)
-        client.connect(('172.17.0.2',5000))
+        client.connect(('172.17.0.3',5000))
         client.sendall(block_json.encode('utf-8'))
         client.close()
         return '200'
@@ -52,7 +58,7 @@ async def Create_Account(account: Account):
         # Envía la cuenta al otro archivo Python
         account_json = json.dumps(account.model_dump())
         client = socket(AF_INET, SOCK_STREAM)
-        client.connect(('172.17.0.2',5000))
+        client.connect(('172.17.0.3',5000))
         client.sendall(account_json.encode('utf-8'))
         client.close()
         return '200'

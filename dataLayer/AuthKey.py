@@ -52,7 +52,7 @@ def CreateAccount():
 
     account = Entities.Account(address, public_key, 10000)
     
-    url = 'http://127.0.0.1:4000/Create_Account'
+    url = f'http://172.17.0.2:4000/Create_Account'
     response = requests.post(url, account.toJSON())
 
     if response.status_code == 200:

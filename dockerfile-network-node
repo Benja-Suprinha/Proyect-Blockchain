@@ -32,4 +32,4 @@ COPY /dataLayer/Entities.py /app
 
 COPY /network/main.py /app
 
-CMD ["python","main.py", "--port", "8001", "-d", "/ip4/172.17.0.3/tcp/8000/p2p/QmYefBjozrG1NQsyF2r1cg9TfDRyqJuuXF9q5daRyyTXda"]
+CMD ["python","main.py", "--port", "8001", "-d", "/ip4/172.17.0.3/tcp/8000/p2p/QmQpMLzbsBMAWGQ6aQWqhWDQNMrcUCJyTjvQkrZT8SeyWX"]
