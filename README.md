@@ -23,7 +23,7 @@ Integrantes del grupo: Tomás Arancibia - Guillermo Martínez - Benjamín Ojeda
 * Paso 5: montaje de la app
   * Desde la ruta /dataLayer
   * Hacer ```docker build -t app-chain -f ./dockerfile . ```
-  *  ```docker build -t app-chain -f ./dockerfile . ```
+  *  ```docker run --name app-chain -it app-chain ```
   *  Verificar que se vea lo siguiente:
   * ![image](https://github.com/Benja-Suprinha/Proyect-Blockchain/assets/135309866/e2d26b21-c01c-45cf-a93f-6453c1d89b59)
 
